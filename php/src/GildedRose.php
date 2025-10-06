@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace GildedRose;
 
+use GildedRose\Enum\ItemEnum;
+use GildedRose\Strategy\Updater\AgedBrieUpdater;
+use GildedRose\Strategy\Updater\BackstagePassesUpdater;
+use GildedRose\Strategy\Updater\ConjuredUpdater;
+use GildedRose\Strategy\Updater\ItemUpdater;
+use GildedRose\Strategy\Updater\SulfurasUpdater;
+
 final class GildedRose
 {
     /**
@@ -14,54 +21,26 @@ final class GildedRose
     ) {
     }
 
-    public function updateQuality(): void
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    public function updateQuality(): self
     {
         foreach ($this->items as $item) {
-            if ($item->name != 'Aged Brie' and $item->name != 'Backstage passes to a TAFKAL80ETC concert') {
-                if ($item->quality > 0) {
-                    if ($item->name != 'Sulfuras, Hand of Ragnaros') {
-                        $item->quality = $item->quality - 1;
-                    }
-                }
-            } else {
-                if ($item->quality < 50) {
-                    $item->quality = $item->quality + 1;
-                    if ($item->name == 'Backstage passes to a TAFKAL80ETC concert') {
-                        if ($item->sellIn < 11) {
-                            if ($item->quality < 50) {
-                                $item->quality = $item->quality + 1;
-                            }
-                        }
-                        if ($item->sellIn < 6) {
-                            if ($item->quality < 50) {
-                                $item->quality = $item->quality + 1;
-                            }
-                        }
-                    }
-                }
-            }
+            $updater = match ($item->name) {
+                ItemEnum::AGED_BRIE->value => new AgedBrieUpdater($item),
+                ItemEnum::BACKSTAGE_PASSES->value => new BackstagePassesUpdater($item),
+                ItemEnum::CONJURED->value => new ConjuredUpdater($item),
+                ItemEnum::SULFURAS->value => new SulfurasUpdater($item),
+                default => new ItemUpdater($item),
+            };
 
-            if ($item->name != 'Sulfuras, Hand of Ragnaros') {
-                $item->sellIn = $item->sellIn - 1;
-            }
-
-            if ($item->sellIn < 0) {
-                if ($item->name != 'Aged Brie') {
-                    if ($item->name != 'Backstage passes to a TAFKAL80ETC concert') {
-                        if ($item->quality > 0) {
-                            if ($item->name != 'Sulfuras, Hand of Ragnaros') {
-                                $item->quality = $item->quality - 1;
-                            }
-                        }
-                    } else {
-                        $item->quality = $item->quality - $item->quality;
-                    }
-                } else {
-                    if ($item->quality < 50) {
-                        $item->quality = $item->quality + 1;
-                    }
-                }
-            }
+            $updater->updateSellIn();
+            $updater->updateQuality();
         }
+
+        return $this;
     }
 }
