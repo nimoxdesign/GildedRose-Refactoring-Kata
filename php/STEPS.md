@@ -1,5 +1,11 @@
 # GildedRose Kata
 
+## Reference links
+
+[GildedRose Kata - Refactor](https://github.com/nimoxdesign/GildedRose-Refactoring-Kata/tree/main/php)
+
+[GildedRose Kata - Requirements](https://github.com/emilybache/GildedRose-Refactoring-Kata/blob/main/GildedRoseRequirements.md)
+
 ## Setup docker
 
 Running DDEV for environment, could have used WardenEnv or plain Dockerfile as well. 
