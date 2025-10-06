@@ -7,7 +7,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use GildedRose\GildedRose;
 use GildedRose\Item;
 
-echo 'OMGHAI!' . PHP_EOL;
+// echo 'OMGHAI!' . PHP_EOL;
 
 $items = [
     new Item('+5 Dexterity Vest', 10, 20),
@@ -24,10 +24,7 @@ $items = [
 
 $app = new GildedRose($items);
 
-$days = 2;
-if ((is_countable($argv) ? count($argv) : 0) > 1) {
-    $days = (int) $argv[1];
-}
+$days = isset($argv[1]) ? (int)$argv[1] : 2;
 
 for ($i = 0; $i < $days; $i++) {
     echo "-------- day {$i} --------" . PHP_EOL;
